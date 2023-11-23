@@ -11,14 +11,17 @@ func StrIsEmpty(str string) bool {
 	return len(str) == 0
 }
 
+// StrIsNotEmpty 判断是否不是空字符串
 func StrIsNotEmpty(str string) bool {
 	return len(str) > 0
 }
 
+// StrToUint64 将字符串转换为uint64
 func StrToUint64(str string) (uint64, error) {
 	return strconv.ParseUint(str, 10, 64)
 }
 
+// GetMapKeys 获取map的key
 func GetMapKeys(m map[string]interface{}) []string {
 	keys := make([]string, 0, len(m))
 	for k := range m {
@@ -27,6 +30,7 @@ func GetMapKeys(m map[string]interface{}) []string {
 	return keys
 }
 
+// StrArrayToString 将字符串数组转换为字符串
 func StrArrayToString(array []string) string {
 	if len(array) == 0 {
 		return ""
@@ -40,6 +44,7 @@ func StrArrayToString(array []string) string {
 	return str[:len(str)-1]
 }
 
+// IntArrayToString 将整型数组转换为字符串
 func IntArrayToString(array []int) string {
 	if len(array) == 0 {
 		return ""
@@ -91,11 +96,12 @@ func ValueToJsonStr(value interface{}) string {
 	return string(marshal)
 }
 
+// MaxInt64 获取最大值
 func MaxInt64(x, y int64) int64 {
 	return ThreeWayOperator(x > y, x, y)
 }
 
-// CalRateToStr 计算百分比
+// CalRateToStr 计算百分比 输出字符串
 func CalRateToStr(num, total int64) string {
 	if total == 0 {
 		return "0.00%"
