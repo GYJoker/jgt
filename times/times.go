@@ -17,6 +17,11 @@ func GetNowPointer() *time.Time {
 	return GetTimePointer(t)
 }
 
+// GetSystemStartTime 获取系统开始时间
+func GetSystemStartTime() time.Time {
+	return ParseTime("2023-01-01 00:00:00")
+}
+
 // FormatTime 格式化时间
 func FormatTime(t *time.Time) string {
 	if t == nil || t.IsZero() {
@@ -59,6 +64,12 @@ func ParseTime(t string) time.Time {
 	}
 
 	tt, _ := time.ParseInLocation("2006-01-02 15:04:05", fmt.Sprintf("%s %s", dateFormat, timeFormat), TimeLocation)
+	return tt
+}
+
+// ParseTTTime 解析时间  2023-09-03T10:27:28+08:00
+func ParseTTTime(t string) time.Time {
+	tt, _ := time.Parse(time.RFC3339, t)
 	return tt
 }
 
