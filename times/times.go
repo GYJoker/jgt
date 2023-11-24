@@ -144,6 +144,18 @@ func EndOfYear(t time.Time) time.Time {
 	return EndOfDay(BeginOfYear(OffsetYearTime(t, 1)).AddDate(0, 0, -1))
 }
 
+// DiffDays 两个时间相差天数
+func DiffDays(t1, t2 time.Time) int {
+	diff := int(t1.Sub(t2).Hours() / 24)
+	if t1.After(t2) && diff > 0 {
+		diff = -diff
+	}
+	if t1.Before(t2) && diff < 0 {
+		diff = -diff
+	}
+	return diff
+}
+
 func addDate(t time.Time, years, months, days int) time.Time {
 	// limit month
 	if months >= 12 || months <= 12 {
