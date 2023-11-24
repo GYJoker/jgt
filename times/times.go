@@ -1,6 +1,10 @@
 package times
 
-import "time"
+import (
+	"fmt"
+	"strings"
+	"time"
+)
 
 // GetTimePointer 获取时间指针
 func GetTimePointer(t time.Time) *time.Time {
@@ -29,9 +33,36 @@ func FormatSystemStrTime(t string) string {
 	return FormatTime(&parse)
 }
 
+var TimeLocation, _ = time.LoadLocation("Asia/Shanghai") // GetTimePointer 获取时间指针
+
 // ParseTime 解析时间
 func ParseTime(t string) time.Time {
-	tt, _ := time.Parse("2006-01-02 15:04:05", t)
+	split := strings.Split(t, " ")
+	if len(split) != 2 {
+		return time.Time{}
+	}
+
+	dateFormat := checkUpdateDateFormat(split[0])
+	if dateFormat == "" {
+		return time.Time{}
+	}
+
+	timeFormat := checkUpdateDateTimeFormat(split[1])
+	if timeFormat == "" {
+		return time.Time{}
+	}
+
+	tt, _ := time.ParseInLocation("2006-01-02 15:04:05", fmt.Sprintf("%s %s", dateFormat, timeFormat), TimeLocation)
+	return tt
+}
+
+// ParseDate 解析日期
+func ParseDate(t string) time.Time {
+	format := checkUpdateDateFormat(t)
+	if format == "" {
+		return time.Time{}
+	}
+	tt, _ := time.ParseInLocation("2006-01-02", format, TimeLocation)
 	return tt
 }
 
@@ -197,4 +228,49 @@ func isLeapYear(year int) bool {
 		return true
 	}
 	return false
+}
+
+// checkUpdateDateFormat 检查修改日期格式为 2006-01-02
+func checkUpdateDateFormat(date string) string {
+	if date == "" {
+		return ""
+	}
+
+	split := strings.Split(date, "-")
+	if len(split) != 3 {
+		return ""
+	}
+
+	if len(split[1]) == 1 {
+		split[1] = "0" + split[1]
+	}
+	if len(split[2]) == 1 {
+		split[2] = "0" + split[2]
+	}
+
+	return strings.Join(split, "-")
+}
+
+// checkUpdateDateTimeFormat 检查修改日期格式为 15:04:05
+func checkUpdateDateTimeFormat(date string) string {
+	if date == "" {
+		return ""
+	}
+
+	split := strings.Split(date, ":")
+	if len(split) != 3 {
+		return ""
+	}
+
+	if len(split[0]) == 1 {
+		split[0] = "0" + split[0]
+	}
+	if len(split[1]) == 1 {
+		split[1] = "0" + split[1]
+	}
+	if len(split[2]) == 1 {
+		split[2] = "0" + split[2]
+	}
+
+	return strings.Join(split, ":")
 }
