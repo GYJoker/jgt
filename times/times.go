@@ -14,7 +14,7 @@ func GetTimePointer(t time.Time) *time.Time {
 // GetNowPointer 获取当前时间指针
 func GetNowPointer() *time.Time {
 	t := time.Now()
-	return &t
+	return GetTimePointer(t)
 }
 
 // FormatTime 格式化时间
