@@ -11,6 +11,12 @@ func GetTimePointer(t time.Time) *time.Time {
 	return &t
 }
 
+// GetNowPointer 获取当前时间指针
+func GetNowPointer() *time.Time {
+	t := time.Now()
+	return &t
+}
+
 // FormatTime 格式化时间
 func FormatTime(t *time.Time) string {
 	if t == nil || t.IsZero() {
