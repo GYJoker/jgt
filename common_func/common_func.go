@@ -73,6 +73,21 @@ func ArrContains[T string | int | float64 | int64](arr []T, val T) bool {
 	return false
 }
 
+// ArrIsEqual 比较两个数组是否相等
+func ArrIsEqual[T string | int | float64 | int64](arr1, arr2 []T) bool {
+	if len(arr1) != len(arr2) {
+		return false
+	}
+
+	for index, value := range arr1 {
+		if arr2[index] != value {
+			return false
+		}
+	}
+
+	return true
+}
+
 // GetNickNameByPhone 获取昵称
 func GetNickNameByPhone(phone string) string {
 	if len(phone) < 7 {
@@ -204,4 +219,22 @@ func ThreeWayOperator[T any](condition bool, trueVal, falseVal T) T {
 		return trueVal
 	}
 	return falseVal
+}
+
+// UInt64RemoveRepeatedElement 去除uint64数组中重复的元素
+func UInt64RemoveRepeatedElement(arr []uint64) (newArr []uint64) {
+	newArr = make([]uint64, 0)
+	for i := 0; i < len(arr); i++ {
+		repeat := false
+		for j := i + 1; j < len(arr); j++ {
+			if arr[i] == arr[j] {
+				repeat = true
+				break
+			}
+		}
+		if !repeat {
+			newArr = append(newArr, arr[i])
+		}
+	}
+	return
 }
