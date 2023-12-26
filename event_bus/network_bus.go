@@ -63,7 +63,7 @@ func (networkBus *NetworkBus) Start() error {
 			_ = http.Serve(l, nil)
 		}()
 	} else {
-		err = errors.New("Server bus already started")
+		err = errors.New("server bus already started")
 	}
 	return err
 }
