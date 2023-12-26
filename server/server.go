@@ -35,7 +35,11 @@ var (
 	bus = event_bus.New()
 )
 
-func InitServer(configId string) {
+func InitServer(configId, configPath string) {
+	if configPath != "" {
+		config.UpdateConfigPath(configPath)
+	}
+
 	// 获取配置信息
 	s, err := config.GetConfig(configId)
 	if err != nil {
