@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+	"github.com/GYJoker/jgt/base"
 	"github.com/GYJoker/jgt/cache"
 	"github.com/GYJoker/jgt/config"
 	"github.com/GYJoker/jgt/constants"
@@ -16,26 +17,29 @@ import (
 	"net/http"
 )
 
-var (
-	isInitSuccess = false
+type (
+	Server struct {
+		Version *base.Version
 
-	// 服务配置
-	cc *config.Config
+		isInitSuccess bool
 
-	// echo
-	ec *echo.Echo
+		cc *config.Config
 
-	// 数据库
-	db *gorm.DB
+		// echo
+		ec *echo.Echo
 
-	// 缓存redis
-	redis cache.RedisManager
+		// 数据库
+		db *gorm.DB
 
-	// bus 全局事件总线
-	bus = event_bus.New()
+		// 缓存redis
+		redis cache.RedisManager
+
+		// bus 全局事件总线
+		bus event_bus.Bus
+	}
 )
 
-func InitServer(configId, configPath string) {
+func InitServer(configId, configPath string, version *base.Version) *Server {
 	if configPath != "" {
 		config.UpdateConfigPath(configPath)
 	}
@@ -44,69 +48,75 @@ func InitServer(configId, configPath string) {
 	s, err := config.GetConfig(configId)
 	if err != nil {
 		panic("get config err: " + err.Error())
-		return
+		return nil
 	}
 
-	cc = s
+	server := &Server{
+		Version: version,
+		cc:      s,
+		bus:     event_bus.New(), // 全局事件总线.
+	}
 
 	// 链接数据库
-	d, err := gorm.Open(mysql.Open(cc.GetConnStr()), &gorm.Config{
+	d, err := gorm.Open(mysql.Open(server.cc.GetConnStr()), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Info),
 	})
 	if err != nil {
 		panic("db connect err" + err.Error())
-		return
+		return nil
 	}
-	db = d
+	server.db = d
 
 	// 链接redis
-	if cc.Redis != nil {
-		redis = cache.NewManager(&cache.RedisConnOpt{
-			Host:     cc.Redis.Host,
-			Port:     cc.Redis.Port,
-			Password: cc.Redis.Password,
+	if server.cc.Redis != nil {
+		server.redis = cache.NewManager(&cache.RedisConnOpt{
+			Host:     server.cc.Redis.Host,
+			Port:     server.cc.Redis.Port,
+			Password: server.cc.Redis.Password,
 		})
 	}
 
 	// 创建echo
-	ec = echo.New()
+	server.ec = echo.New()
 
-	isInitSuccess = true
+	server.isInitSuccess = true
 
 	// 添加路由
-	addRouter()
+	server.addRouter()
 
 	// 添加中间件
-	addMiddleware()
+	server.addMiddleware()
 
 	// 添加日志
-	addLogger()
+	server.addLogger()
+
+	return server
 }
 
-func StartServer() {
+func (s *Server) StartServer() {
 	// 启动定时删除临时文件
 	//utils.TimerDeleteTempFile()
 
 	// 启动服务
-	ec.Logger.Fatalf(ec.Start(cc.ServerAddr()).Error())
+	s.ec.Logger.Fatalf(s.ec.Start(s.cc.ServerAddr()).Error())
 }
 
-func addRouter() {
+func (s *Server) addRouter() {
 	// 添加路由
-	ec.GET("/", func(c echo.Context) error {
-		return c.String(200, "hello world -- "+cc.Server.Label)
+	s.ec.GET("/", func(c echo.Context) error {
+		return c.String(200, "hello world -- "+s.cc.Server.Label)
 	})
 
-	ec.GET("/ping", func(c echo.Context) error {
+	s.ec.GET("/ping", func(c echo.Context) error {
 		return resp.ResponseBody(c, resp.GenSuccess("pong"))
 	})
 }
 
-func addMiddleware() {
+func (s *Server) addMiddleware() {
 	// 添加中间件
 
 	// 错误处理
-	ec.HTTPErrorHandler = func(err error, c echo.Context) {
+	s.ec.HTTPErrorHandler = func(err error, c echo.Context) {
 		if err == nil {
 			return
 		}
@@ -119,16 +129,16 @@ func addMiddleware() {
 	}
 
 	// 请求预处理
-	ec.Pre(func(next echo.HandlerFunc) echo.HandlerFunc {
+	s.ec.Pre(func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
-			req.SetMuddleName(c, cc.Server.AppID)
+			req.SetMuddleName(c, s.cc.Server.AppID)
 			// 在这里进行请求预处理
 			return next(c)
 		}
 	})
 
 	// 允许跨域
-	ec.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+	s.ec.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"*"}, // "http://localhost:7200", "https://gongyj.net"},
 		AllowMethods: []string{echo.GET, echo.PUT, echo.POST, echo.DELETE},
 		AllowHeaders: []string{echo.HeaderAccessControlAllowHeaders, echo.HeaderAccessControlAllowOrigin,
@@ -150,34 +160,34 @@ func addMiddleware() {
 	//ec.Use(middleware.BodyDumpWithConfig(defaultBodyDumpConfig))
 }
 
-func addLogger() {
+func (s *Server) addLogger() {
 	// 添加日志
 }
 
-func GetEcho() *echo.Echo {
-	if !isInitSuccess || ec == nil {
+func (s *Server) GetEcho() *echo.Echo {
+	if !s.isInitSuccess || s.ec == nil {
 		panic("server not init")
 	}
-	return ec
+	return s.ec
 }
 
-func GetDB() *gorm.DB {
-	if !isInitSuccess || db == nil {
+func (s *Server) GetDB() *gorm.DB {
+	if !s.isInitSuccess || s.db == nil {
 		panic("server not init")
 	}
-	return db
+	return s.db
 }
 
-func GetRedis() cache.RedisManager {
-	if !isInitSuccess || redis == nil {
+func (s *Server) GetRedis() cache.RedisManager {
+	if !s.isInitSuccess || s.redis == nil {
 		panic("server not init")
 	}
-	return redis
+	return s.redis
 }
 
-func GetBus() event_bus.Bus {
-	if !isInitSuccess || bus == nil {
+func (s *Server) GetBus() event_bus.Bus {
+	if !s.isInitSuccess || s.bus == nil {
 		panic("server not init")
 	}
-	return bus
+	return s.bus
 }

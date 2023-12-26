@@ -1,7 +1,6 @@
 package resp
 
 import (
-	"encoding/json"
 	"github.com/GYJoker/jgt/req"
 	"github.com/labstack/echo/v4"
 	"net/http"
@@ -28,7 +27,7 @@ type Log struct {
 	Token      string      `json:"token"`
 }
 
-type logFunc func(info string)
+type logFunc func(log *Log)
 
 var logCallback logFunc
 
@@ -123,8 +122,7 @@ func ResponseBody(c echo.Context, body *Body) error {
 }
 
 func writeLogInfo(log *Log) {
-	marshal, _ := json.Marshal(log)
 	if logCallback != nil {
-		go logCallback(string(marshal))
+		go logCallback(log)
 	}
 }
