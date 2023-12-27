@@ -191,3 +191,10 @@ func (s *Server) GetBus() event_bus.Bus {
 	}
 	return s.bus
 }
+
+func (s *Server) GetConfig() *config.Config {
+	if !s.isInitSuccess || s.cc == nil {
+		panic("server not init")
+	}
+	return s.cc
+}

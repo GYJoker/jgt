@@ -97,6 +97,14 @@ func SetMerchantCode(c echo.Context, merchantCode string) {
 	c.Set(constants.MerchantCodeKey, merchantCode)
 }
 
+func SetCustomValue(c echo.Context, key string, value interface{}) {
+	c.Set(key, value)
+}
+
+func GetCustomValue(c echo.Context, key string) interface{} {
+	return c.Get(key)
+}
+
 func GetMerchantCode(c echo.Context) string {
 	return getContextStringValue(c, constants.MerchantCodeKey)
 }

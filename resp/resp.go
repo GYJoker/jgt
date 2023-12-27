@@ -98,8 +98,8 @@ func ResponseBody(c echo.Context, body *Body) error {
 		path = split[0]
 		last := split[1]
 		if strings.Contains(last, "&") {
-			split := strings.Split(last, "&")
-			path += split[1]
+			s := strings.Split(last, "&")
+			path += s[1]
 		}
 	}
 
