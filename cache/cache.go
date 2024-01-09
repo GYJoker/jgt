@@ -19,7 +19,7 @@ type RedisManager interface {
 
 	// ExpireSet 设置保存信息，带过期时间
 	// 默认string类型
-	ExpireSet(key, value string, sec int) (bool, error)
+	ExpireSet(key, value string, sec int64) (bool, error)
 
 	// Get 读取信息
 	// 默认string类型
@@ -111,7 +111,7 @@ func (m *redisManager) Set(key, value string) (bool, error) {
 	return str == "OK", nil
 }
 
-func (m *redisManager) ExpireSet(key, value string, sec int) (bool, error) {
+func (m *redisManager) ExpireSet(key, value string, sec int64) (bool, error) {
 	conn := m.pool.Get()
 	defer m.closeConn(conn)
 
