@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+	"strings"
 )
 
 // StrIsEmpty 判断是否是空字符串
@@ -30,32 +31,56 @@ func GetMapKeys(m map[string]interface{}) []string {
 	return keys
 }
 
-// StrArrayToString 将字符串数组转换为字符串
-func StrArrayToString(array []string) string {
+func ArrayToString[T string | int | float64 | uint64 | int64](array []T) string {
 	if len(array) == 0 {
 		return ""
 	}
 
 	str := ""
 	for _, s := range array {
-		str += s + ","
+		str += fmt.Sprintf("%v,", s)
 	}
 
 	return str[:len(str)-1]
 }
 
-// IntArrayToString 将整型数组转换为字符串
-func IntArrayToString(array []int) string {
-	if len(array) == 0 {
-		return ""
+func SplitStringToIntArray(str string) ([]int, error) {
+	return splitAndConvert(str, func(s string) (int, error) {
+		return strconv.Atoi(s)
+	})
+}
+
+func SplitStringToUint64Array(str string) ([]uint64, error) {
+	return splitAndConvert(str, func(s string) (uint64, error) {
+		return strconv.ParseUint(s, 10, 64)
+	})
+}
+
+func SplitStringToFloat64Array(str string) ([]float64, error) {
+	return splitAndConvert(str, func(s string) (float64, error) {
+		return strconv.ParseFloat(s, 64)
+	})
+}
+
+func SplitStringToStringArray(str string) ([]string, error) {
+	return splitAndConvert(str, func(s string) (string, error) {
+		return s, nil
+	})
+}
+
+func splitAndConvert[T any](str string, convert func(string) (T, error)) ([]T, error) {
+	split := strings.Split(str, ",")
+	array := make([]T, 0, len(split))
+
+	for _, s := range split {
+		v, err := convert(s)
+		if err != nil {
+			return nil, err
+		}
+		array = append(array, v)
 	}
 
-	str := ""
-	for _, s := range array {
-		str += strconv.Itoa(s) + ","
-	}
-
-	return str[:len(str)-1]
+	return array, nil
 }
 
 // FormatStrMoney 将数字转换为金额格式
