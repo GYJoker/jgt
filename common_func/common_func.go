@@ -69,6 +69,9 @@ func SplitStringToStringArray(str string) ([]string, error) {
 }
 
 func splitAndConvert[T any](str string, convert func(string) (T, error)) ([]T, error) {
+	if len(str) == 0 {
+		return make([]T, 0), nil
+	}
 	split := strings.Split(str, ",")
 	array := make([]T, 0, len(split))
 
