@@ -92,7 +92,7 @@ func FormatStrMoney(money int64) string {
 }
 
 // ArrContains 判断数组是否包含某个元素
-func ArrContains[T string | int | float64 | int64](arr []T, val T) bool {
+func ArrContains[T string | int | float64 | int64 | uint64 | uint | uint16 | uint8 | uint32](arr []T, val T) bool {
 	for _, v := range arr {
 		if v == val {
 			return true
