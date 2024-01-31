@@ -39,21 +39,10 @@ type (
 	}
 )
 
-func InitServer(configId, configPath string, version *base.Version) *Server {
-	if configPath != "" {
-		config.UpdateConfigPath(configPath)
-	}
-
-	// 获取配置信息
-	s, err := config.GetConfig(configId)
-	if err != nil {
-		panic("get config err: " + err.Error())
-		return nil
-	}
-
+func InitServerByConfig(conf *config.Config, version *base.Version) *Server {
 	server := &Server{
 		Version: version,
-		cc:      s,
+		cc:      conf,
 		bus:     event_bus.New(), // 全局事件总线.
 	}
 
@@ -94,6 +83,21 @@ func InitServer(configId, configPath string, version *base.Version) *Server {
 	server.addLogger()
 
 	return server
+}
+
+func InitServer(configId, configPath string, version *base.Version) *Server {
+	if configPath != "" {
+		config.UpdateConfigPath(configPath)
+	}
+
+	// 获取配置信息
+	s, err := config.GetConfig(configId)
+	if err != nil {
+		panic("get config err: " + err.Error())
+		return nil
+	}
+
+	return InitServerByConfig(s, version)
 }
 
 func (s *Server) StartServer() {
