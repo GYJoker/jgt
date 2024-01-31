@@ -20,3 +20,10 @@ func GenerateSign(timestamp string) string {
 	hash.Write([]byte(fmt.Sprintf("%s-%s-%s", timestamp, "gtrive", timestamp)))
 	return hex.EncodeToString(hash.Sum(nil))
 }
+
+// GetContentMd5 获取内容的md5值
+func GetContentMd5(content string) string {
+	hash := md5.New()
+	hash.Write([]byte(content))
+	return hex.EncodeToString(hash.Sum(nil))
+}

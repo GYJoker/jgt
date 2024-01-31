@@ -3,6 +3,7 @@ package common_func
 import (
 	"encoding/json"
 	"fmt"
+	"os"
 	"strconv"
 	"strings"
 )
@@ -265,4 +266,19 @@ func UInt64RemoveRepeatedElement(arr []uint64) (newArr []uint64) {
 		}
 	}
 	return
+}
+
+// GetFileContentSize 获取文件大小
+func GetFileContentSize(path string) int64 {
+	file, err := os.Open(path)
+	if err != nil {
+		fmt.Println(err)
+		return 0
+	}
+	fileInfo, err := file.Stat()
+	if err != nil {
+		fmt.Println(err)
+		return 0
+	}
+	return fileInfo.Size()
 }
