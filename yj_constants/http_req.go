@@ -1,15 +1,15 @@
-package constants
+package yj_constants
 
 const (
 	TraceIdKey      = "cur-trace-id"
 	MuddleName      = "muddle-name"
 	JwtTokenKey     = "Authorization"
 	ReqParamKey     = "req-param"
-	UserInfoKey     = "user_server_info"
-	UserIdKey       = "user_server_id"
-	UserNameKey     = "user_server_name"
+	UserInfoKey     = "user_server-info"
+	UserIdKey       = "user_server-id"
+	UserNameKey     = "user_server-name"
 	RefreshTokenKey = "refresh_token"
-	UserRolesKey    = "user_dto_roles"
+	UserRolesKey    = "user-roles"
 	MerchantCodeKey = "merchant_code"
 )
 

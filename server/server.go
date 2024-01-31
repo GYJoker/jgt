@@ -5,10 +5,10 @@ import (
 	"github.com/GYJoker/jgt/base"
 	"github.com/GYJoker/jgt/cache"
 	"github.com/GYJoker/jgt/config"
-	"github.com/GYJoker/jgt/constants"
 	"github.com/GYJoker/jgt/event_bus"
 	"github.com/GYJoker/jgt/req"
 	"github.com/GYJoker/jgt/resp"
+	"github.com/GYJoker/jgt/yj_constants"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"gorm.io/driver/mysql"
@@ -145,9 +145,9 @@ func (s *Server) addMiddleware() {
 		AllowOrigins: []string{"*"}, // "http://localhost:7200", "https://gongyj.net"},
 		AllowMethods: []string{echo.GET, echo.PUT, echo.POST, echo.DELETE},
 		AllowHeaders: []string{echo.HeaderAccessControlAllowHeaders, echo.HeaderAccessControlAllowOrigin,
-			echo.HeaderContentType, "authorization", constants.HeaderAppIdKey, constants.HeaderVersionKey,
-			constants.HeaderMacKey, constants.HeaderSignKey, constants.HeaderPlatformKey, constants.HeaderDeviceKey,
-			constants.HeaderTimestampKey, "fileName"},
+			echo.HeaderContentType, "authorization", yj_constants.HeaderAppIdKey, yj_constants.HeaderVersionKey,
+			yj_constants.HeaderMacKey, yj_constants.HeaderSignKey, yj_constants.HeaderPlatformKey, yj_constants.HeaderDeviceKey,
+			yj_constants.HeaderTimestampKey, "fileName"},
 		ExposeHeaders: []string{echo.HeaderAccessControlAllowHeaders, echo.HeaderAccessControlAllowOrigin, "fileName"},
 	}))
 
