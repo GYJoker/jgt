@@ -58,14 +58,17 @@ func InitServer(configId, configPath string, version *base.Version) *Server {
 	}
 
 	// 链接数据库
-	d, err := gorm.Open(mysql.Open(server.cc.GetConnStr()), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Info),
-	})
-	if err != nil {
-		panic("db connect err" + err.Error())
-		return nil
+	sqlConnStr := server.cc.GetConnStr()
+	if sqlConnStr != "" {
+		d, e := gorm.Open(mysql.Open(sqlConnStr), &gorm.Config{
+			Logger: logger.Default.LogMode(logger.Info),
+		})
+		if e != nil {
+			panic("db connect err" + e.Error())
+			return nil
+		}
+		server.db = d
 	}
-	server.db = d
 
 	// 链接redis
 	if server.cc.Redis != nil {

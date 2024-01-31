@@ -213,17 +213,17 @@ func StrVal(value interface{}) string {
 
 // ArrayInGroupsOf 将数组分割为多个数组
 func ArrayInGroupsOf(arr []uint64, num int64) [][]uint64 {
-	max := int64(len(arr))
+	m := int64(len(arr))
 	//判断数组大小是否小于等于指定分割大小的值，是则把原数组放入二维数组返回
-	if max <= num {
+	if m <= num {
 		return [][]uint64{arr}
 	}
 	//获取应该数组分割为多少份
 	var quantity int64
-	if max%num == 0 {
-		quantity = max / num
+	if m%num == 0 {
+		quantity = m / num
 	} else {
-		quantity = (max / num) + 1
+		quantity = (m / num) + 1
 	}
 	//声明分割好的二维数组
 	var segments = make([][]uint64, 0)

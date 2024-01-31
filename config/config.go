@@ -148,6 +148,9 @@ func IsInternalIp(ip string) bool {
 }
 
 func (c *Config) GetConnStr() string {
+	if c.MySql == nil {
+		return ""
+	}
 	return c.MySql.User +
 		":" +
 		c.MySql.Password +
