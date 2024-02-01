@@ -20,6 +20,7 @@ type JwtMap struct {
 	HeaderImg    string `json:"header_img,omitempty"`
 	Phone        string `json:"phone,omitempty"`
 	MerchantCode string `json:"merchant_code,omitempty"`
+	TenantUid    string `json:"tenant_uid,omitempty"`
 }
 
 func Jwt(data *JwtMap) (string, error) {
