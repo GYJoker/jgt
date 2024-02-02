@@ -143,7 +143,7 @@ func (s *Server) addMiddleware() {
 	// 请求预处理
 	s.ec.Pre(func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
-			req.SetMuddleName(c, s.cc.Server.AppID)
+			req.SetMuddleName(c, s.cc.Server.Name)
 			// 在这里进行请求预处理
 			return next(c)
 		}
