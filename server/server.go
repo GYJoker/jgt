@@ -1,11 +1,13 @@
 package server
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/GYJoker/jgt/base"
 	"github.com/GYJoker/jgt/cache"
 	"github.com/GYJoker/jgt/config"
 	"github.com/GYJoker/jgt/event_bus"
+	"github.com/GYJoker/jgt/glog"
 	"github.com/GYJoker/jgt/req"
 	"github.com/GYJoker/jgt/resp"
 	"github.com/GYJoker/jgt/yj_constants"
@@ -14,7 +16,10 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
+	"io"
 	"net/http"
+	"strings"
+	"time"
 )
 
 type (
@@ -204,4 +209,68 @@ func (s *Server) GetConfig() *config.Config {
 		panic("server not init")
 	}
 	return s.cc
+}
+
+// ReportServerInfo 上报服务信息
+func (s *Server) ReportServerInfo() {
+	if strings.Contains(s.cc.ConfigId, "center_server") {
+		return
+	}
+	server := s.cc.Server
+	report, err := config.GetConfig("center_server")
+	register := report.Server
+	param := make(map[string]interface{})
+	param["name"] = server.Name
+	param["ip"] = server.LocalIp
+	param["port"] = server.Port
+	body, err := postReq("http://"+register.Host+":"+register.Port+"/"+yj_constants.RegisterPath, param)
+	if err != nil {
+		fmt.Println("report service info failed, g_error:", err)
+
+		time.AfterFunc(time.Minute*2, s.ReportServerInfo)
+
+		return
+	}
+	fmt.Println(body)
+}
+
+// PostReq post请求
+func postReq(url string, param interface{}) (*resp.Body, error) {
+	bytes, err := json.Marshal(param)
+	if err != nil {
+		return nil, err
+	}
+	reader := strings.NewReader(string(bytes))
+	// 发送请求
+	response, err := http.Post(url, "application/json", reader)
+	if err != nil {
+		return nil, err
+	}
+	return handleRespData(response)
+}
+
+// handleRespData 处理返回数据
+func handleRespData(response *http.Response) (*resp.Body, error) {
+	defer func(body io.ReadCloser) {
+		err := body.Close()
+		if err != nil {
+			glog.GetLogger().Error("close body failed, err:", err)
+		}
+	}(response.Body)
+	// 解析返回数据
+	bytes, err := io.ReadAll(response.Body)
+	if err != nil {
+		glog.GetLogger().Error("read body failed, err:", err)
+		return nil, err
+	}
+	data := &resp.Body{}
+	err = json.Unmarshal(bytes, data)
+	if err != nil {
+		return &resp.Body{
+			Data: string(bytes),
+			Code: response.StatusCode,
+			Msg:  response.Status,
+		}, nil
+	}
+	return data, nil
 }
