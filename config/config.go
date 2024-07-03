@@ -35,6 +35,8 @@ type (
 		Redis *RedisConfig `json:"redis" yaml:"redis"`
 		// 服务名称
 		ConfigId string `json:"config_id" yaml:"config_id"`
+		// nsq配置
+		Nsq *NsqConfig `json:"msg_nsq" yaml:"msg_nsq"`
 	}
 
 	ServerConfig struct {
@@ -66,6 +68,11 @@ type (
 		PwdSalt    string `json:"pwd_salt" yaml:"pwd_salt"`
 		RsaPubFile string `json:"rsa_pub_file" yaml:"rsa_pub_file"`
 		RsaPriFile string `json:"rsa_pri_file" yaml:"rsa_pri_file"`
+	}
+
+	NsqConfig struct {
+		Host string `json:"host"`
+		Port string `json:"port"`
 	}
 )
 

@@ -8,6 +8,7 @@ import (
 	"github.com/GYJoker/jgt/config"
 	"github.com/GYJoker/jgt/event_bus"
 	"github.com/GYJoker/jgt/glog"
+	"github.com/GYJoker/jgt/msg_nsq"
 	"github.com/GYJoker/jgt/req"
 	"github.com/GYJoker/jgt/resp"
 	"github.com/GYJoker/jgt/yj_constants"
@@ -41,6 +42,9 @@ type (
 
 		// bus 全局事件总线
 		bus event_bus.Bus
+
+		// 消息中间件
+		msgNsq msg_nsq.Manager
 	}
 )
 
@@ -71,6 +75,11 @@ func InitServerByConfig(conf *config.Config, version *base.Version) *Server {
 			Port:     server.cc.Redis.Port,
 			Password: server.cc.Redis.Password,
 		})
+	}
+
+	// 链接nsq
+	if server.cc.Nsq != nil {
+		server.msgNsq = msg_nsq.NewManager(server.cc.Nsq)
 	}
 
 	// 创建echo
