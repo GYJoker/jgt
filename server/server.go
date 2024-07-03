@@ -194,23 +194,30 @@ func (s *Server) GetEcho() *echo.Echo {
 
 func (s *Server) GetDB() *gorm.DB {
 	if !s.isInitSuccess || s.db == nil {
-		panic("server not init")
+		panic("db not init")
 	}
 	return s.db
 }
 
 func (s *Server) GetRedis() cache.RedisManager {
 	if !s.isInitSuccess || s.redis == nil {
-		panic("server not init")
+		panic("redis not init")
 	}
 	return s.redis
 }
 
 func (s *Server) GetBus() event_bus.Bus {
 	if !s.isInitSuccess || s.bus == nil {
-		panic("server not init")
+		panic("bus not init")
 	}
 	return s.bus
+}
+
+func (s *Server) GetMsgNsq() msg_nsq.Manager {
+	if !s.isInitSuccess || s.msgNsq == nil {
+		panic("msg_nsq not init")
+	}
+	return s.msgNsq
 }
 
 func (s *Server) GetConfig() *config.Config {
