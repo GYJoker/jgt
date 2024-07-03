@@ -83,7 +83,7 @@ func (n *nsqManager) Subscribe(topic, channel string, handler HandlerFunc) error
 
 	consumer.AddHandler(&Handler{callback: handler})
 
-	err = consumer.ConnectToNSQLookupd(fmt.Sprintf("%s:%s", n.conf.Host, n.conf.Port))
+	err = consumer.ConnectToNSQLookupd(fmt.Sprintf("%s:%s", n.conf.Host, n.conf.HttpPort))
 	if err != nil {
 		glog.GetLogger().Errorf("connect to nsqlookupd failed, err:%v", err)
 		return err

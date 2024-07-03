@@ -71,8 +71,9 @@ type (
 	}
 
 	NsqConfig struct {
-		Host string `json:"host"`
-		Port string `json:"port"`
+		Host     string `json:"host" yaml:"host"`
+		Port     string `json:"port" yaml:"port"`
+		HttpPort string `json:"http_port" yaml:"http_port"`
 	}
 )
 
