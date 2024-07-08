@@ -15,10 +15,7 @@ type JwtMap struct {
 	IssuedAt     int64  `json:"iat,omitempty"`
 	RefreshAt    int64  `json:"rea,omitempty"`
 	Issuer       string `json:"iss,omitempty"`
-	Subject      uint64 `json:"sub,omitempty"`
-	UserName     string `json:"user_name,omitempty"`
-	HeaderImg    string `json:"header_img,omitempty"`
-	Phone        string `json:"phone,omitempty"`
+	Subject      string `json:"sub,omitempty"`
 	MerchantCode string `json:"merchant_code,omitempty"`
 	TenantUid    string `json:"tenant_uid,omitempty"`
 }
