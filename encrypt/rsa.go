@@ -43,6 +43,9 @@ func GetRSA() *RSA {
 func _initRsaKey(config *config.EncryptConfig) *RSA {
 	myRsa := &RSA{config: config}
 
+	// 判断文件夹是否存在
+	files.CheckAndCreatePath(config.RsaPriFile)
+
 	if files.FileExists(config.RsaPriFile) && files.FileExists(config.RsaPubFile) {
 		/// readKey
 		rsaPrivateKeyByte, _ := os.ReadFile(config.RsaPriFile)

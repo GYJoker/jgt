@@ -14,3 +14,11 @@ func TestZipFileDir(t *testing.T) {
 	t.Log("success")
 	t.Log(path)
 }
+
+func TestCheckAndCreatePath(t *testing.T) {
+	path := "/usr/local/conf/ai_chat/rsa_pub.key"
+
+	CheckAndCreatePath(path)
+
+	t.Log("success")
+}

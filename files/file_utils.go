@@ -72,6 +72,25 @@ func FileExists(path string) bool {
 	return true
 }
 
+// CheckAndCreatePath 检查路径是否存在，不存在则创建
+func CheckAndCreatePath(path string) {
+	_, err := os.Stat(path)
+	if os.IsNotExist(err) {
+		// 创建目录及父目录，如果需要创建文件则使用 os.Create
+		err = os.MkdirAll(filepath.Dir(path), 0755)
+		if err != nil {
+			fmt.Println("创建路径失败:", err)
+			return
+		}
+		fmt.Println("路径已创建")
+	} else if err != nil {
+		fmt.Println("获取路径状态失败:", err)
+		return
+	} else {
+		fmt.Println("路径已存在")
+	}
+}
+
 // GetBaseDir 获取文件的基础目录
 func GetBaseDir() string {
 	return "./"
